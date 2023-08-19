@@ -34,7 +34,7 @@
 # AND IT COULD DAMAGE YOUR DISPLAY. THERE IS NO WARRANTY INCLUDED AND YOU USE
 # THIS CODE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR ANYTHING THAT HAPPENS
 # INCLUDING BUT NOT LIMITED TO: DESTRUCTION OF YOUR DISPLAY, PI, HOUSE, CAR,
-# SPACE-TIME-CONTINUUM, OR IF THE CODE KILLS YOUR CAT. IF YOU AREN'T WILLING TO 
+# SPACE-TIME-CONTINUUM, OR IF THE CODE KILLS YOUR CAT. IF YOU AREN'T WILLING TO
 # TAKE THESE RISKS, PLEASE DO NOT USE THIS CODE.
 # =============================================================================
 
@@ -57,7 +57,7 @@ class EPD:
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
 
-    lut_vcomDC = [  
+    lut_vcomDC = [
         0x00, 0x08, 0x00, 0x00, 0x00, 0x02,
         0x60, 0x28, 0x28, 0x00, 0x00, 0x01,
         0x00, 0x14, 0x00, 0x00, 0x00, 0x01,
@@ -68,7 +68,7 @@ class EPD:
         0x00, 0x00,
     ]
 
-    lut_ww = [  
+    lut_ww = [
         0x40, 0x08, 0x00, 0x00, 0x00, 0x02,
         0x90, 0x28, 0x28, 0x00, 0x00, 0x01,
         0x40, 0x14, 0x00, 0x00, 0x00, 0x01,
@@ -78,7 +78,7 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
 
-    lut_bw = [  
+    lut_bw = [
         0x40, 0x17, 0x00, 0x00, 0x00, 0x02,
         0x90, 0x0F, 0x0F, 0x00, 0x00, 0x03,
         0x40, 0x0A, 0x01, 0x00, 0x00, 0x01,
@@ -98,7 +98,7 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
 
-    lut_bb = [ 
+    lut_bb = [
         0x80, 0x08, 0x00, 0x00, 0x00, 0x02,
         0x90, 0x28, 0x28, 0x00, 0x00, 0x00,
         0x80, 0x14, 0x00, 0x00, 0x00, 0x01,
@@ -107,8 +107,8 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
-    
-    lut_vcom1 = [  
+
+    lut_vcom1 = [
         0xA0, 0x10, 0x10, 0x00, 0x00, 0x02,
         0x00, 0x10, 0x10, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -119,7 +119,7 @@ class EPD:
         0x00, 0x00,
     ]
 
-    lut_ww1 = [  
+    lut_ww1 = [
         0x50, 0x01, 0x01, 0x00, 0x00, 0x01,
         0xA0, 0x42, 0x42, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -130,7 +130,7 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
 
-    lut_bw1 = [  
+    lut_bw1 = [
         0x50, 0x01, 0x01, 0x00, 0x00, 0x01,
         0xA0, 0x42, 0x42, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -151,7 +151,7 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
 
-    lut_bb1 = [ 
+    lut_bb1 = [
         0xA0, 0x01, 0x01, 0x00, 0x00, 0x01,
         0x50, 0x42, 0x42, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -159,17 +159,17 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    ] 
+    ]
 
-        
+
     # Hardware reset
     def reset(self):
         epdconfig.digital_write(self.reset_pin, 1)
-        epdconfig.delay_ms(200) 
+        epdconfig.delay_ms(200)
         epdconfig.digital_write(self.reset_pin, 0)
         epdconfig.delay_ms(10)
         epdconfig.digital_write(self.reset_pin, 1)
-        epdconfig.delay_ms(200)   
+        epdconfig.delay_ms(200)
 
     def send_command(self, command):
         epdconfig.digital_write(self.dc_pin, 0)
@@ -182,25 +182,25 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 0)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
-        
+
     def ReadBusy(self):
         logging.debug("e-Paper busy")
         while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
             self.send_command(0x71)
-            epdconfig.delay_ms(100)  
+            epdconfig.delay_ms(100)
         logging.debug("e-Paper busy release")
-        
+
     def TurnOnDisplay(self):
         self.send_command(0x12)
         epdconfig.delay_ms(10)
         self.ReadBusy()
-        
+
     def init(self):
         if (epdconfig.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
-        
+
         self.send_command(0x01)	# POWER SETTING
         self.send_data(0x03)
         self.send_data(0x00)
@@ -231,7 +231,7 @@ class EPD:
         self.send_command(0x82)	# vcom_DC setting
         self.send_data(0x28)
         return 0
-        
+
     def SetFullReg(self):
         self.send_command(0x82)
         self.send_data(0x00)
@@ -247,7 +247,7 @@ class EPD:
         self.send_data(0x03)
         self.send_command(0X50)
         self.send_data(0x47)
-        
+
         self.send_command(0x20) # vcom
         for count in range(0, 44):
             self.send_data(self.lut_vcom1[count])
@@ -289,26 +289,26 @@ class EPD:
         return buf
 
     def display(self, image):
-        if (Image == None):
+        if (Image is None):
             return
-            
+
         self.send_command(0x10)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(0x00)
         epdconfig.delay_ms(10)
-        
+
         self.send_command(0x13)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(image[i])
         epdconfig.delay_ms(10)
-        
+
         self.SetFullReg()
         self.TurnOnDisplay()
-        
-    def DisplayPartial(self, image):   
-        if (Image == None):
+
+    def DisplayPartial(self, image):
+        if (Image is None):
             return
-            
+
         self.SetPartReg()
         self.send_command(0x91)
         self.send_command(0x90)
@@ -320,30 +320,30 @@ class EPD:
         self.send_data(int(self.height / 256))
         self.send_data(self.height % 256 - 1)
         self.send_data(0x28)
-            
+
         self.send_command(0x10)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(image[i])
         epdconfig.delay_ms(10)
-        
+
         self.send_command(0x13)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(~image[i])
         epdconfig.delay_ms(10)
-          
+
         self.TurnOnDisplay()
-        
+
     def Clear(self):
         self.send_command(0x10)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(0x00)
         epdconfig.delay_ms(10)
-        
+
         self.send_command(0x13)
         for i in range(0, int(self.width * self.height / 8)):
             self.send_data(0x00)
         epdconfig.delay_ms(10)
-        
+
         self.SetFullReg()
         self.TurnOnDisplay()
 
@@ -351,7 +351,7 @@ class EPD:
         self.send_command(0X50)
         self.send_data(0xf7)
         self.send_command(0X02) # power off
-        self.send_command(0X07) # deep sleep  
+        self.send_command(0X07) # deep sleep
         self.send_data(0xA5)
 
         epdconfig.module_exit()

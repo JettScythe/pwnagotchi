@@ -3,7 +3,7 @@
  # | file      	:	LCD_1IN44.py
  # |	version		:	V2.0
  # | date		:	2018-07-16
- # | function	:	On the ST7735S chip driver and clear screen, drawing lines, drawing, writing 
+ # | function	:	On the ST7735S chip driver and clear screen, drawing lines, drawing, writing
  #					and other functions to achieve
  #
  # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -44,7 +44,7 @@ if LCD_1IN8 == 1:
 	LCD_X = 1
 	LCD_Y = 2
 
-LCD_X_MAXPIXEL = 132  #LCD width maximum memory 
+LCD_X_MAXPIXEL = 132  #LCD width maximum memory
 LCD_Y_MAXPIXEL = 162  #LCD height maximum memory
 
 #scanning method
@@ -93,7 +93,7 @@ class LCD:
 		for i in range(0, DataLen):
 			config.SPI_Write_Byte([Data >> 8])
 			config.SPI_Write_Byte([Data & 0xff])
-		
+
 	"""    Common register initialization    """
 	def LCD_InitReg(self):
 		#ST7735R Frame Rate
@@ -114,11 +114,11 @@ class LCD:
 		self.LCD_WriteData_8bit(0x01)
 		self.LCD_WriteData_8bit(0x2C)
 		self.LCD_WriteData_8bit(0x2D)
-		
-		#Column inversion 
+
+		#Column inversion
 		self.LCD_WriteReg(0xB4)
 		self.LCD_WriteData_8bit(0x07)
-		
+
 		#ST7735R Power Sequence
 		self.LCD_WriteReg(0xC0)
 		self.LCD_WriteData_8bit(0xA2)
@@ -137,10 +137,10 @@ class LCD:
 		self.LCD_WriteReg(0xC4)
 		self.LCD_WriteData_8bit(0x8A)
 		self.LCD_WriteData_8bit(0xEE)
-		
-		self.LCD_WriteReg(0xC5)#VCOM 
+
+		self.LCD_WriteReg(0xC5)#VCOM
 		self.LCD_WriteData_8bit(0x0E)
-		
+
 		#ST7735R Gamma Sequence
 		self.LCD_WriteReg(0xe0)
 		self.LCD_WriteData_8bit(0x0f)
@@ -176,34 +176,34 @@ class LCD:
 		self.LCD_WriteData_8bit(0x00)
 		self.LCD_WriteData_8bit(0x07)
 		self.LCD_WriteData_8bit(0x03)
-		self.LCD_WriteData_8bit(0x10) 
-		
+		self.LCD_WriteData_8bit(0x10)
+
 		#Enable test command
 		self.LCD_WriteReg(0xF0)
 		self.LCD_WriteData_8bit(0x01)
-		
+
 		#Disable ram power save mode
 		self.LCD_WriteReg(0xF6)
 		self.LCD_WriteData_8bit(0x00)
-		
+
 		#65k mode
 		self.LCD_WriteReg(0x3A)
 		self.LCD_WriteData_8bit(0x05)
 
 	#********************************************************************************
 	#function:	Set the display scan and color transfer modes
-	#parameter: 
+	#parameter:
 	#		Scan_dir   :   Scan direction
 	#		Colorchose :   RGB or GBR color format
 	#********************************************************************************
 	def LCD_SetGramScanWay(self, Scan_dir):
 		#Get the screen scan direction
 		self.LCD_Scan_Dir = Scan_dir
-		
+
 		#Get GRAM and LCD width and height
 		if (Scan_dir == L2R_U2D) or (Scan_dir == L2R_D2U) or (Scan_dir == R2L_U2D) or (Scan_dir == R2L_D2U) :
-			self.width	= LCD_HEIGHT 
-			self.height 	= LCD_WIDTH 
+			self.width	= LCD_HEIGHT
+			self.height 	= LCD_WIDTH
 			if Scan_dir == L2R_U2D:
 				MemoryAccessReg_Data = 0X00 | 0x00
 			elif Scan_dir == L2R_D2U:
@@ -213,8 +213,8 @@ class LCD:
 			else:		#R2L_D2U:
 				MemoryAccessReg_Data = 0x40 | 0x80
 		else:
-			self.width	= LCD_WIDTH 
-			self.height 	= LCD_HEIGHT 
+			self.width	= LCD_WIDTH
+			self.height 	= LCD_HEIGHT
 			if Scan_dir == U2D_L2R:
 				MemoryAccessReg_Data = 0X00 | 0x00 | 0x20
 			elif Scan_dir == U2D_R2L:
@@ -223,7 +223,7 @@ class LCD:
 				MemoryAccessReg_Data = 0x80 | 0x00 | 0x20
 			else:		#R2L_D2U
 				MemoryAccessReg_Data = 0x40 | 0x80 | 0x20
-		
+
 		#please set (MemoryAccessReg_Data & 0x10) != 1
 		if (MemoryAccessReg_Data & 0x10) != 1:
 			self.LCD_X_Adjust = LCD_Y
@@ -231,46 +231,46 @@ class LCD:
 		else:
 			self.LCD_X_Adjust = LCD_X
 			self.LCD_Y_Adjust = LCD_Y
-		
+
 		# Set the read / write scan direction of the frame memory
-		self.LCD_WriteReg(0x36)		#MX, MY, RGB mode 
+		self.LCD_WriteReg(0x36)		#MX, MY, RGB mode
 		if LCD_1IN44 == 1:
 			self.LCD_WriteData_8bit( MemoryAccessReg_Data | 0x08)	#0x08 set RGB
 		else:
 			self.LCD_WriteData_8bit( MemoryAccessReg_Data & 0xf7)	#RGB color filter panel
 
 	#/********************************************************************************
-	#function:	
+	#function:
 	#			initialization
 	#********************************************************************************/
 	def LCD_Init(self, Lcd_ScanDir):
 		if (config.GPIO_Init() != 0):
 			return -1
-		
+
 		#Turn on the backlight
 		#GPIO.setup(config.LCD_BL_PIN, GPIO.OUT)
 		GPIO.output(config.LCD_BL_PIN,GPIO.HIGH)
-		
+
 		#Hardware reset
 		self.LCD_Reset()
-		
+
 		#Set the initialization register
 		self.LCD_InitReg()
-		
-		#Set the display scan and color transfer modes	
+
+		#Set the display scan and color transfer modes
 		self.LCD_SetGramScanWay(Lcd_ScanDir)
 		config.Driver_Delay_ms(200)
-		
+
 		#sleep out
 		self.LCD_WriteReg(0x11)
 		config.Driver_Delay_ms(120)
-		
+
 		#Turn on the LCD display
 		self.LCD_WriteReg(0x29)
-		
+
 	#/********************************************************************************
 	#function:	Sets the start position and size of the display area
-	#parameter: 
+	#parameter:
 	#	Xstart 	:   X direction Start coordinates
 	#	Ystart  :   Y direction Start coordinates
 	#	Xend    :   X direction end coordinates
@@ -302,7 +302,7 @@ class LCD:
 			config.SPI_Write_Byte(_buffer[i:i+4096])
 
 	def LCD_ShowImage(self,Image,Xstart,Ystart):
-		if (Image == None):
+		if (Image is None):
 			return
 		imwidth, imheight = Image.size
 		if imwidth != self.width or imheight != self.height:

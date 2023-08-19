@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 
-'''
+"""
 depends: freetype-py
-'''
+"""
 
 import freetype
 import math
@@ -25,7 +25,7 @@ class Freetype_Helper:
     self._width = int(width)
     self._height = int(height)
     self._face.set_pixel_sizes(width, height)
-  
+
   def setDisLowerLimite(self, limite):
     self._fade = limite
 
@@ -51,7 +51,7 @@ class Freetype_Helper:
       width = self._width
       buffer = rslt
       rslt = []
-    if (ord(ch) >= ord(" ") and ord(ch) <= ord("~")) or width <= (self._width // 2):
+    if (ord(" ") <= ord(ch) <= ord("~")) or width <= (self._width // 2):
       rslt = [0] * (((self._width - 1) // 16 + 1) * self._height + 1)
       left = (self._width // 2 - width) // 2
       lineDataLen = (self._width - 1) // 16 + 1
@@ -74,7 +74,7 @@ class Freetype_Helper:
             print("freetype_helper getOne err: width: %d, height: %d, top: %d, left: %d, rslt_len: %d, originY: %d" %(width, height, top, left, len(rslt), originY))
             raise("err")
           # rslt[i * lineDataLen + (j + left) // 8 + top] |= 0x80 >> ((j + left) % 8)
-    if (ord(ch) >= ord(" ") and ord(ch) <= ord("~")) or width < (self._width // 2):
+    if (ord(" ") <= ord(ch) <= ord("~")) or width < (self._width // 2):
       return (rslt, self._width // 2, self._height, "TBMLLR")
     else:
       return (rslt, self._width, self._height, "TBMLLR")

@@ -323,7 +323,7 @@ class EPD:
         self.ReadBusy()
 
     def pwndisplay(self, imageblack):
-        if (Image == None):
+        if (Image is None):
             return
 
         self.send_command(0x10)
